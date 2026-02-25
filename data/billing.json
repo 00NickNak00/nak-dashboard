@@ -1,0 +1,12 @@
+{
+  "gemini": {
+    "spent": 12.45,
+    "budget": 100,
+    "dailySpend": 2.10
+  },
+  "anthropic": {
+    "spent": 8.20,
+    "budget": 50,
+    "dailySpend": 0.50
+  }
+}

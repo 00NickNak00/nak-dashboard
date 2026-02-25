@@ -1,38 +1,36 @@
-// API route to fetch billing data from Google Cloud and Anthropic
+import fs from 'fs'
+import path from 'path'
 
-export default async function handler(req, res) {
+export default function handler(req, res) {
   try {
-    // For now, return mock data - we'll integrate real APIs
+    // Read billing data from JSON file
+    const dataPath = path.join(process.cwd(), 'data', 'billing.json')
+    const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'))
+
     const billingData = {
       gemini: {
         provider: 'Google Gemini Flash',
-        budget: 100,
-        spent: 12.45,
-        dailySpend: 2.10,
+        budget: data.gemini.budget,
+        spent: data.gemini.spent,
+        dailySpend: data.gemini.dailySpend,
         threshold_warning: 50,
         threshold_danger: 90,
         lastUpdated: new Date().toISOString(),
       },
       anthropic: {
         provider: 'Anthropic Haiku',
-        budget: 50,
-        spent: 8.20,
-        dailySpend: 0.50,
+        budget: data.anthropic.budget,
+        spent: data.anthropic.spent,
+        dailySpend: data.anthropic.dailySpend,
         threshold_warning: 50,
         threshold_danger: 90,
         lastUpdated: new Date().toISOString(),
       },
       total: {
-        spent: 20.65,
-        budgetRemaining: 129.35,
+        spent: data.gemini.spent + data.anthropic.spent,
+        budgetRemaining: (data.gemini.budget + data.anthropic.budget) - (data.gemini.spent + data.anthropic.spent),
       },
     }
-
-    // TODO: Integrate real Google Cloud Billing API
-    // const googleBilling = await fetchGoogleBillingData()
-    
-    // TODO: Integrate real Anthropic usage API
-    // const anthropicBilling = await fetchAnthropicBillingData()
 
     res.status(200).json(billingData)
   } catch (error) {
