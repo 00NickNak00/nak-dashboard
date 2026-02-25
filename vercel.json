@@ -1,7 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "env": {
-    "TRADER_WORKSPACE": "@trader_workspace"
-  }
+  "outputDirectory": ".next"
 }
