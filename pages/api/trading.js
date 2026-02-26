@@ -7,21 +7,23 @@ export default async function handler(req, res) {
     const tradingData = {
       positions: hlData.positions || [],
       history: hlData.history || [],
-      pnl: (hlData.positions || []).reduce((acc, p) => acc + parseFloat(p.pnl), 0),
+      pnl: (hlData.positions || []).reduce((acc, p) => acc + parseFloat(p.pnl || 0), 0),
       equity: hlData.equity || 0,
       available: hlData.available || 0,
-      mode: 'paper',
+      mode: 'testnet',
       lastUpdated: new Date().toISOString(),
     }
 
     res.status(200).json(tradingData)
   } catch (error) {
-    console.error('Error in trading API:', error)
+    console.error('Trading API Error:', error)
     res.status(200).json({ 
       positions: [], 
       history: [], 
       pnl: 0, 
-      capital: 1000 
+      equity: 0,
+      available: 0,
+      error: error.message
     })
   }
 }
