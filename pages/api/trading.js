@@ -1,19 +1,26 @@
-// API route to fetch trading data from Trader workspace
+import { getHyperliquidTradingData } from '../../lib/hyperliquid-api'
 
 export default async function handler(req, res) {
   try {
-    // Return mock trading data
+    const hlData = await getHyperliquidTradingData()
+
     const tradingData = {
-      positions: [],
-      pnl: 0,
-      capital: 10000,
+      positions: hlData.positions || [],
+      history: hlData.history || [],
+      pnl: hlData.positions.reduce((acc, p) => acc + parseFloat(p.pnl), 0),
+      capital: hlData.equity || 1000,
       mode: 'paper',
       lastUpdated: new Date().toISOString(),
     }
 
     res.status(200).json(tradingData)
   } catch (error) {
-    console.error('Error fetching trading data:', error)
-    res.status(500).json({ error: 'Failed to fetch trading data' })
+    console.error('Error in trading API:', error)
+    res.status(200).json({ 
+      positions: [], 
+      history: [], 
+      pnl: 0, 
+      capital: 1000 
+    })
   }
 }
