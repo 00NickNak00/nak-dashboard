@@ -88,17 +88,17 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Trading Row */}
+              {/* Trading Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TradingCard
-                title="Active Trades"
-                value={data.trading?.positions?.length || 0}
-                type="positions"
+                title="Account Value"
+                value={data.trading?.equity || 0}
+                type="equity"
               />
               <TradingCard
-                title="Unrealized P&L"
-                value={data.trading?.pnl || 0}
-                type="pnl"
+                title="Available Cash"
+                value={data.trading?.available || 0}
+                type="available"
               />
             </div>
           </div>
