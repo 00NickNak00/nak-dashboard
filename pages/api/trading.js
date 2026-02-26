@@ -7,8 +7,9 @@ export default async function handler(req, res) {
     const tradingData = {
       positions: hlData.positions || [],
       history: hlData.history || [],
-      pnl: hlData.positions.reduce((acc, p) => acc + parseFloat(p.pnl), 0),
-      capital: hlData.equity || 1000,
+      pnl: (hlData.positions || []).reduce((acc, p) => acc + parseFloat(p.pnl), 0),
+      equity: hlData.equity || 0,
+      available: hlData.available || 0,
       mode: 'paper',
       lastUpdated: new Date().toISOString(),
     }
