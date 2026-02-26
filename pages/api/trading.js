@@ -5,11 +5,8 @@ export default async function handler(req, res) {
     const hlData = await getHyperliquidTradingData()
 
     const tradingData = {
-      positions: hlData.positions || [],
-      history: hlData.history || [],
+      ...hlData,
       pnl: (hlData.positions || []).reduce((acc, p) => acc + parseFloat(p.pnl || 0), 0),
-      equity: hlData.equity || 0,
-      available: hlData.available || 0,
       mode: 'testnet',
       lastUpdated: new Date().toISOString(),
     }
@@ -17,12 +14,6 @@ export default async function handler(req, res) {
     res.status(200).json(tradingData)
   } catch (error) {
     console.error('Trading API Error:', error)
-    res.status(200).json({ 
-      positions: [], 
-      history: [], 
-      pnl: 0, 
-      equity: 0,
-      available: 0
-    })
+    res.status(500).json({ error: error.message })
   }
 }
