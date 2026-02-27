@@ -18,18 +18,30 @@ async function ot(path) {
 
 export default async function handler(req, res) {
   try {
-    const [me, posts, overview, tweets] = await Promise.all([
-      ot('/api/v1/me'),
-      ot('/api/v1/posts?limit=10'),
-      ot('/api/v1/analytics/overview'),
-      ot('/api/v1/analytics/tweets?limit=10'),
-    ])
+    const me = await ot('/api/v1/me')
+    const posts = await ot('/api/v1/posts?limit=10')
+
+    let overview = null
+    let tweets = null
+    let analyticsWarning = null
+
+    try {
+      overview = await ot('/api/v1/analytics/overview')
+    } catch (e) {
+      analyticsWarning = (analyticsWarning || []).concat(['overview_unavailable'])
+    }
+
+    try {
+      tweets = await ot('/api/v1/analytics/tweets?limit=10')
+    } catch (e) {
+      analyticsWarning = (analyticsWarning || []).concat(['tweet_analytics_requires_advanced_plan'])
+    }
 
     return res.status(200).json({
       source: 'opentweet',
       capabilities: {
         canReadOwnPosts: true,
-        canReadOwnAnalytics: true,
+        canReadOwnAnalytics: Boolean(overview || tweets),
         canReadHomeTimeline: false,
         canReadPrivateGroups: false,
       },
@@ -37,6 +49,7 @@ export default async function handler(req, res) {
       posts,
       overview,
       tweets,
+      analyticsWarning,
       note: 'OpenTweet is for your account posting + analytics. It does not provide full private X timeline/groups access.',
     })
   } catch (error) {
