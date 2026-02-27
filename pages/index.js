@@ -3,28 +3,32 @@ import Layout from '../components/Layout'
 import BillingCard from '../components/BillingCard'
 import AgentCard from '../components/AgentCard'
 import TradingCard from '../components/TradingCard'
+import SungrowFlowCard from '../components/SungrowFlowCard'
 
 export default function Dashboard() {
   const [data, setData] = useState({
     billing: null,
     agents: null,
     trading: null,
+    sungrow: null,
     loading: true,
   })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [billingRes, agentsRes, tradingRes] = await Promise.all([
+        const [billingRes, agentsRes, tradingRes, sungrowRes] = await Promise.all([
           fetch('/api/billing'),
           fetch('/api/agents'),
           fetch('/api/trading'),
+          fetch('/api/sungrow'),
         ])
 
         setData({
           billing: await billingRes.json(),
           agents: await agentsRes.json(),
           trading: await tradingRes.json(),
+          sungrow: await sungrowRes.json(),
           loading: false,
         })
       } catch (err) {
@@ -101,6 +105,9 @@ export default function Dashboard() {
                 type="available"
               />
             </div>
+
+            {/* Sungrow Energy Flow */}
+            <SungrowFlowCard data={data.sungrow} />
           </div>
 
           {/* Agent Status - Sidebar (Moves to bottom on mobile) */}
